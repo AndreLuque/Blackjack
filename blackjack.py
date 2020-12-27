@@ -37,6 +37,12 @@ def main():
     #Inicializamos el booleano para salir del todo del juego
     exit = False
     #Iniciamos el juego
+    #Todas las cartas con la que se pueden jugar
+    listCards = ['2C', '2D', '2H', '2S', '3C', '3D', '3H', '3S', '4C', '4D', '4H', '4S', '5C', '5D', '5H', '5S', '6C', '6D',
+                 '6H', '6S', '7C', '7D', '7H', '7S', '8C', '8D', '8H', '8S', '9C', '9D', '9H', '9S', '10C', '10D', '10H', '10S',
+                 'JC', 'JD', 'JH', 'JS','QC', 'QD', 'QH', 'QS','KC', 'KD', 'KH', 'KS','AC', 'AD', 'AH', 'AS']
+    #Aqui almacenamos las cartas que ya estan en juego y por lo tanto no se pueden repetir
+    listUsedCards = []             
     pygame.init()
     while playAgain and not exit:
         #solo se jugará otra vez si el usuario lo decida
@@ -46,9 +52,14 @@ def main():
         #Creamos al juagdor y el crupier
         player = Player(1000, '', '', 50)
         crupier = Player(0, '', '', 0)
-        #Ponemos la posicion inicial del menu de apuestas y du desplazamiento
+        #Ponemos la posicion inicial del menu de apuestas y de la apuesta
         betMenu_y = 300
-        changeBM_y = 0
+        bet_x = 300
+        #Posicion incial de las cartas
+        cardp1_x = 1100
+        cardp2_x = 1100
+        cardc1_x = 1100
+        cardc2_x = 1100
         #Inicializamos el booleano para ver si la apuesta es definitiva
         deal = False
         #Establecemos la pantalla, sus dimensiones y su nombre
@@ -102,28 +113,95 @@ def main():
                     if event.key == pygame.K_q:
                         exit = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                        None  
+                        if 45 <= pos[0] <= 225 and 235 <= pos[1] <= 290:
+                            deal = True
             #Cubrimos la pantalla de verde                
-            screen.fill(GREEN)
+            screen.fill(GREEN)       
+
             #Creamos el menu donde se hará la apuesta
             pygame.draw.rect(screen, LIGHT_BLUE, (0, betMenu_y, 450, 30)) 
             pygame.draw.rect(screen, BLUE, (0, betMenu_y + 30, 450, 270))            
             font = pygame.font.Font('Anton.ttf', 18)
             text = font.render("BANK:", True, WHITE)
-            screen.blit(text, [50, 300])
+            screen.blit(text, [50, betMenu_y])
             text = font.render(str(player.money), True, WHITE)
-            screen.blit(text, [100, 300])
+            screen.blit(text, [100, betMenu_y])
             #Ponemos el dinero que el usuario haya puesto para apostar
             font = pygame.font.Font('Anton.ttf', 65)
             text = font.render(str(player.bet), True, WHITE)
-            screen.blit(text, [300, 215])
+            screen.blit(text, [bet_x, 215])
             text = font.render('$', True, LIGHT_GREEN)
-            screen.blit(text, [260, 215])
+            screen.blit(text, [bet_x - 40, 215])
             #Ponemos las fichas
 
             #Boton de all-in 
 
             #Boton de Deal, empezará el juego
+            #Desplazamos la apuesta y el menu en caso de que el usuario pulse DEAL para empezar el juego 
+            if deal:
+                if betMenu_y < 570:
+                    betMenu_y += 1
+                elif betMenu_y >= 570:
+                    betMenu_y = 570 
+                if bet_x < 500:
+                    bet_x += 1
+                elif bet_x >= 500:
+                    bet_x = 500 
+                    #Cogemos una 4 cartas al azar de la baraja sin que se repitan
+                    if player.card1 == '':
+                        r = random.randrange(0, 52)
+                        while r in listUsedCards:
+                            r = random.randrange(0, 52)
+                        player.card1 = listCards[r]
+                        listUsedCards += [r] 
+                        r = random.randrange(0, 52)
+                        while r in listUsedCards:
+                            r = random.randrange(0, 52)
+                        player.card2 = listCards[r]
+                        listUsedCards += [r] 
+                        r = random.randrange(0, 52)
+                        while r in listUsedCards:
+                            r = random.randrange(0, 52)
+                        crupier.card1 = listCards[r]
+                        listUsedCards += [r] 
+                        r = random.randrange(0, 52)
+                        while r in listUsedCards:
+                            r = random.randrange(0, 52)
+                        crupier.card2 = listCards[r]
+                        listUsedCards += [r] 
+                        print(player.card1, player.card2, crupier.card1, crupier.card2)
+                    #Cargamos las cartas a la pantalla
+                    card = pygame.image.load(player.card1 + '.jpg').convert()   
+                    card = pygame.transform.scale(card, (106, 157)) 
+                    screen.blit(card, [cardp1_x, 330])
+                    card = pygame.image.load('blue_back.jpg').convert() 
+                    card = pygame.transform.scale(card, (106, 157))    
+                    screen.blit(card, [cardc1_x, 50])
+                    card = pygame.image.load(player.card2 + '.jpg').convert() 
+                    card = pygame.transform.scale(card, (106, 157))  
+                    screen.blit(card, [cardp2_x, 330]) 
+                    card = pygame.image.load(crupier.card2 + '.jpg').convert()  
+                    card = pygame.transform.scale(card, (106, 157))   
+                    screen.blit(card, [cardc2_x, 50])
+                    #Actualizamos la posicion de las cartas en secuencia
+                    if cardp1_x > 430:
+                        cardp1_x += -20
+                    else: 
+                        cardp1_x = 430
+                        if cardc1_x > 430:
+                            cardc1_x += -20
+                        else: 
+                            cardc1_x = 430   
+                            if cardp2_x > 480:
+                                cardp2_x += -20
+                            else: 
+                                cardp2_x = 480   
+                                if cardc2_x > 480:
+                                    cardc2_x += -20
+                                else: 
+                                    cardc2_x = 480    
+                                    
+
             if not deal:
                 buttonColor = DARK_GRAY
                 if  45 <= pos[0] <= 225 and 235 <= pos[1] <= 290: 
@@ -133,7 +211,7 @@ def main():
                 text = font.render('DEAL', True, WHITE)
                 screen.blit(text, [100, 230])
 
-                
+
             pygame.display.flip()
 
 
@@ -145,7 +223,7 @@ def main():
 
 
 
-        clock.tick(100)    
+        clock.tick(200)    
     pygame.quit()
 
 if __name__ == '__main__': main()
