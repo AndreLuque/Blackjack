@@ -23,13 +23,91 @@ DARK_GRAY = (150,150,150)
 DARKER_GRAY = (125, 125, 125)
 DARKEST_GRAY = (100, 100, 100)
 LIGHTER_GRAY = (200, 200, 200)
+RED = (200, 0, 0)
+DARKER_RED = (150, 0, 0)
 
 class Player ():
-    def __init__(self, money, card1, card2, bet):
+    def __init__(self, money, card1, card2, bet, totalCards, ace):
         self.money = money
         self.card1 = card1
         self.card2 = card2
         self.bet = bet
+        self.totalCards = totalCards
+        self.ace = ace
+
+def pointsCard(player:Player, numberCard:int) -> None:
+    if numberCard == 1:
+        if player.ace == True:
+            if player.card1[0] == 'J' or player.card1[0] == 'Q' or player.card1[0] == 'K':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    None    
+            elif player.card1[0] == 'A':
+                player.ace = True
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                else:
+                    player.totalCards += 1
+            elif player.card1[0] == '1' and player.card1[1] == '0':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    None             
+            else:
+                if player.totalCards + int(player.card1[0]) <= 21:
+                   player.totalCards += int(player.card1[0]) 
+                else:
+                    player.totalCards += int(player.card1[0]) - 10  
+        else:
+            if player.card1[0] == 'J' or player.card1[0] == 'Q' or player.card1[0] == 'K':
+                player.totalCards += 10 
+            elif player.card1[0] == 'A':
+                player.ace = True
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                else:
+                    player.totalCards += 1  
+            elif player.card1[0] == '1' and player.card1[1] == '0':
+                player.totalCards += 10          
+            else:
+                player.totalCards += int(player.card1[0])   
+    elif numberCard == 2:
+        if player.ace == True:
+            if player.card2[0] == 'J' or player.card2[0] == 'Q' or player.card2[0] == 'K':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    None    
+            elif player.card2[0] == 'A':
+                player.ace = True
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                else:
+                    player.totalCards += 1  
+            elif player.card2[0] == '1' and player.card2[1] == '0':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    None              
+            else:
+                if player.totalCards + int(player.card2[0]) <= 21:
+                   player.totalCards += int(player.card2[0]) 
+                else:
+                    player.totalCards += int(player.card2[0]) - 10  
+        else:
+            if player.card2[0] == 'J' or player.card2[0] == 'Q' or player.card2[0] == 'K':
+                player.totalCards += 10 
+            elif player.card2[0] == 'A':
+                player.ace = True
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                else:
+                    player.totalCards += 1
+            elif player.card2[0] == '1' and player.card2[1] == '0':
+                player.totalCards += 10            
+            else:
+                player.totalCards += int(player.card2[0])                     
 
 def main():  
     #Inicializamos el booleano playAgain para ver si el usuario quiere volver a jugar
@@ -50,8 +128,8 @@ def main():
         #inicializamos el booleano done hasta que salga de la pantalla de introduccion
         done = False
         #Creamos al juagdor y el crupier
-        player = Player(1000, '', '', 50)
-        crupier = Player(0, '', '', 0)
+        player = Player(1000, '', '', 50, 0, False)
+        crupier = Player(0, '', '', 0, 0, False)
         #Ponemos la posicion inicial del menu de apuestas y de la apuesta
         betMenu_y = 300
         bet_x = 300
@@ -62,6 +140,8 @@ def main():
         cardc2_x = 1100
         #Inicializamos el booleano para ver si la apuesta es definitiva
         deal = False
+        #Inicializamos para que cuente los puntos de cada carta una vez
+        count = 0
         #Establecemos la pantalla, sus dimensiones y su nombre
         dimensions = [1000, 600]
         screen = pygame.display.set_mode(dimensions) 
@@ -147,6 +227,15 @@ def main():
                     bet_x += 1
                 elif bet_x >= 500:
                     bet_x = 500 
+                    #Ponemos el contador de las cartas
+                    pygame.draw.circle(screen, LIGHTER_GRAY, (750, 400), 50)
+                    font = pygame.font.Font('Anton.ttf', 50)
+                    text = font.render(str(player.totalCards), True, WHITE)
+                    screen.blit(text, [732, 365])
+                    pygame.draw.circle(screen, LIGHTER_GRAY, (750, 100), 50)
+                    font = pygame.font.Font('Anton.ttf', 50)
+                    text = font.render(str(crupier.totalCards), True, WHITE)
+                    screen.blit(text, [732, 65])
                     #Cogemos una 4 cartas al azar de la baraja sin que se repitan
                     if player.card1 == '':
                         r = random.randrange(0, 52)
@@ -169,7 +258,7 @@ def main():
                             r = random.randrange(0, 52)
                         crupier.card2 = listCards[r]
                         listUsedCards += [r] 
-                        print(player.card1, player.card2, crupier.card1, crupier.card2)
+                        print(player.card1, player.card2, crupier.card1, crupier.card2)    
                     #Cargamos las cartas a la pantalla
                     card = pygame.image.load(player.card1 + '.jpg').convert()   
                     card = pygame.transform.scale(card, (106, 157)) 
@@ -183,11 +272,14 @@ def main():
                     card = pygame.image.load(crupier.card2 + '.jpg').convert()  
                     card = pygame.transform.scale(card, (106, 157))   
                     screen.blit(card, [cardc2_x, 50])
-                    #Actualizamos la posicion de las cartas en secuencia
+                    #Actualizamos la posicion de las cartas en secuencia y añadimos su puntuacion
                     if cardp1_x > 430:
                         cardp1_x += -20
                     else: 
                         cardp1_x = 430
+                        if count == 0:
+                            pointsCard(player, 1)
+                            count += 1
                         if cardc1_x > 430:
                             cardc1_x += -20
                         else: 
@@ -195,12 +287,31 @@ def main():
                             if cardp2_x > 480:
                                 cardp2_x += -20
                             else: 
-                                cardp2_x = 480   
+                                cardp2_x = 480 
+                                if count == 1:
+                                    pointsCard(player, 2) 
+                                    count += 1 
                                 if cardc2_x > 480:
                                     cardc2_x += -20
                                 else: 
-                                    cardc2_x = 480    
-                                    
+                                    cardc2_x = 480 
+                                    if count == 2:
+                                        pointsCard(crupier, 2)
+                                        count += 1   
+                    buttonColor = RED
+                    if  200 <= pos[0] <= 330 and 230 <= pos[1] <= 300: 
+                        buttonColor = DARKER_RED
+                    pygame.draw.rect(screen, buttonColor, (200, 230, 130, 70)) 
+                    font = pygame.font.Font('Anton.ttf', 50)
+                    text = font.render('HIT', True, WHITE)
+                    screen.blit(text, [235, 227])    
+                    buttonColor = RED
+                    if  700 <= pos[0] <= 830 and 230 <= pos[1] <= 300: 
+                        buttonColor = DARKER_RED
+                    pygame.draw.rect(screen, buttonColor, (700, 230, 130, 70)) 
+                    font = pygame.font.Font('Anton.ttf', 46)
+                    text = font.render('STAND', True, WHITE)
+                    screen.blit(text, [713, 227])                
 
             if not deal:
                 buttonColor = DARK_GRAY
