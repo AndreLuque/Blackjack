@@ -27,10 +27,11 @@ RED = (200, 0, 0)
 DARKER_RED = (150, 0, 0)
 
 class Player ():
-    def __init__(self, money, card1, card2, bet, totalCards, ace):
+    def __init__(self, money, card1, card2, card, bet, totalCards, ace):
         self.money = money
         self.card1 = card1
         self.card2 = card2
+        self.card = card
         self.bet = bet
         self.totalCards = totalCards
         self.ace = ace
@@ -42,30 +43,32 @@ def pointsCard(player:Player, numberCard:int) -> None:
                 if player.totalCards + 10 <= 21:
                     player.totalCards += 10
                 else:
-                    None    
+                    player.ace = False    
             elif player.card1[0] == 'A':
                 player.ace = True
                 if player.totalCards + 11 <= 21:
                     player.totalCards += 11
                 else:
                     player.totalCards += 1
+                    player.ace = False
             elif player.card1[0] == '1' and player.card1[1] == '0':
                 if player.totalCards + 10 <= 21:
                     player.totalCards += 10
                 else:
-                    None             
+                    player.ace = False             
             else:
                 if player.totalCards + int(player.card1[0]) <= 21:
                    player.totalCards += int(player.card1[0]) 
                 else:
-                    player.totalCards += int(player.card1[0]) - 10  
+                    player.totalCards += int(player.card1[0]) - 10 
+                    player.ace = False  
         else:
             if player.card1[0] == 'J' or player.card1[0] == 'Q' or player.card1[0] == 'K':
                 player.totalCards += 10 
             elif player.card1[0] == 'A':
-                player.ace = True
                 if player.totalCards + 11 <= 21:
                     player.totalCards += 11
+                    player.ace = True
                 else:
                     player.totalCards += 1  
             elif player.card1[0] == '1' and player.card1[1] == '0':
@@ -78,36 +81,76 @@ def pointsCard(player:Player, numberCard:int) -> None:
                 if player.totalCards + 10 <= 21:
                     player.totalCards += 10
                 else:
-                    None    
-            elif player.card2[0] == 'A':
-                player.ace = True
-                if player.totalCards + 11 <= 21:
-                    player.totalCards += 11
-                else:
-                    player.totalCards += 1  
-            elif player.card2[0] == '1' and player.card2[1] == '0':
-                if player.totalCards + 10 <= 21:
-                    player.totalCards += 10
-                else:
-                    None              
-            else:
-                if player.totalCards + int(player.card2[0]) <= 21:
-                   player.totalCards += int(player.card2[0]) 
-                else:
-                    player.totalCards += int(player.card2[0]) - 10  
-        else:
-            if player.card2[0] == 'J' or player.card2[0] == 'Q' or player.card2[0] == 'K':
-                player.totalCards += 10 
+                    player.ace = False 
             elif player.card2[0] == 'A':
                 player.ace = True
                 if player.totalCards + 11 <= 21:
                     player.totalCards += 11
                 else:
                     player.totalCards += 1
+                    player.ace = False   
+            elif player.card2[0] == '1' and player.card2[1] == '0':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    player.ace = False               
+            else:
+                if player.totalCards + int(player.card2[0]) <= 21:
+                   player.totalCards += int(player.card2[0]) 
+                else:
+                    player.totalCards += int(player.card2[0]) - 10  
+                    player.ace = False 
+        else:
+            if player.card2[0] == 'J' or player.card2[0] == 'Q' or player.card2[0] == 'K':
+                player.totalCards += 10 
+            elif player.card2[0] == 'A':
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                    player.ace = True
+                else:
+                    player.totalCards += 1
             elif player.card2[0] == '1' and player.card2[1] == '0':
                 player.totalCards += 10            
             else:
-                player.totalCards += int(player.card2[0])                     
+                player.totalCards += int(player.card2[0])   
+    else:
+        if player.ace == True:
+            if player.card[0] == 'J' or player.card[0] == 'Q' or player.card[0] == 'K':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    player.ace = False     
+            elif player.card[0] == 'A':
+                player.ace = True
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                else:
+                    player.totalCards += 1
+                    player.ace = False   
+            elif player.card[0] == '1' and player.card[1] == '0':
+                if player.totalCards + 10 <= 21:
+                    player.totalCards += 10
+                else:
+                    player.ace = False 
+            else:
+                if player.totalCards + int(player.card[0]) <= 21:
+                   player.totalCards += int(player.card[0]) 
+                else:
+                    player.totalCards += int(player.card[0]) - 10
+                    player.ace = False   
+        else:
+            if player.card[0] == 'J' or player.card[0] == 'Q' or player.card[0] == 'K':
+                player.totalCards += 10 
+            elif player.card[0] == 'A':
+                if player.totalCards + 11 <= 21:
+                    player.totalCards += 11
+                    player.ace = True
+                else:
+                    player.totalCards += 1
+            elif player.card[0] == '1' and player.card[1] == '0':
+                player.totalCards += 10            
+            else:
+                player.totalCards += int(player.card[0])                              
 
 def main():  
     #Inicializamos el booleano playAgain para ver si el usuario quiere volver a jugar
@@ -118,9 +161,7 @@ def main():
     #Todas las cartas con la que se pueden jugar
     listCards = ['2C', '2D', '2H', '2S', '3C', '3D', '3H', '3S', '4C', '4D', '4H', '4S', '5C', '5D', '5H', '5S', '6C', '6D',
                  '6H', '6S', '7C', '7D', '7H', '7S', '8C', '8D', '8H', '8S', '9C', '9D', '9H', '9S', '10C', '10D', '10H', '10S',
-                 'JC', 'JD', 'JH', 'JS','QC', 'QD', 'QH', 'QS','KC', 'KD', 'KH', 'KS','AC', 'AD', 'AH', 'AS']
-    #Aqui almacenamos las cartas que ya estan en juego y por lo tanto no se pueden repetir
-    listUsedCards = []             
+                 'JC', 'JD', 'JH', 'JS','QC', 'QD', 'QH', 'QS','KC', 'KD', 'KH', 'KS','AC', 'AD', 'AH', 'AS']      
     pygame.init()
     while playAgain and not exit:
         #solo se jugará otra vez si el usuario lo decida
@@ -128,8 +169,13 @@ def main():
         #inicializamos el booleano done hasta que salga de la pantalla de introduccion
         done = False
         #Creamos al juagdor y el crupier
-        player = Player(1000, '', '', 50, 0, False)
-        crupier = Player(0, '', '', 0, 0, False)
+        player = Player(1000, '', '', '', 50, 0, False)
+        crupier = Player(0, '', '', '', 0, 0, False)
+        #Aqui almacenamos las cartas que ya estan en juego y por lo tanto no se pueden repetir
+        listUsedCards = []       
+        #Almacenamos las nuevas cartas del jugador y del crupier que vamos a introducir en el juego
+        listNewCardsP = []
+        listNewCardsC = []
         #Ponemos la posicion inicial del menu de apuestas y de la apuesta
         betMenu_y = 300
         bet_x = 300
@@ -138,8 +184,20 @@ def main():
         cardp2_x = 1100
         cardc1_x = 1100
         cardc2_x = 1100
+        #Posicion inicial de cada carta nueva que introducimos del crupier y del jugador
+        cardp_x = 1100
+        cardc_x = 1100
+        #Posicion inicial de cada una de las nuevas cartas
+        newCard_x  = 330
+        newCard_y = 380
+        #Para poner la carta en una altura mas baja
+        change_y = 0
         #Inicializamos el booleano para ver si la apuesta es definitiva
         deal = False
+        #Booleano para ver si el usuario quiere otra carta
+        hit = False
+        #Booleano para ver si el usuario se quiere quedar
+        stand = False
         #Inicializamos para que cuente los puntos de cada carta una vez
         count = 0
         #Establecemos la pantalla, sus dimensiones y su nombre
@@ -195,6 +253,10 @@ def main():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                         if 45 <= pos[0] <= 225 and 235 <= pos[1] <= 290:
                             deal = True
+                        elif 200 <= pos[0] <= 330 and 230 <= pos[1] <= 300 and count == 3:
+                            hit = True
+                        elif 700 <= pos[0] <= 830 and 230 <= pos[1] <= 300 and count == 3:
+                            stand = True         
             #Cubrimos la pantalla de verde                
             screen.fill(GREEN)       
 
@@ -298,6 +360,7 @@ def main():
                                     if count == 2:
                                         pointsCard(crupier, 2)
                                         count += 1   
+                    #Creamos los botones de hit y stand para determinar si el usuario quiere mas cartas o no                    
                     buttonColor = RED
                     if  200 <= pos[0] <= 330 and 230 <= pos[1] <= 300: 
                         buttonColor = DARKER_RED
@@ -312,6 +375,109 @@ def main():
                     font = pygame.font.Font('Anton.ttf', 46)
                     text = font.render('STAND', True, WHITE)
                     screen.blit(text, [713, 227])                
+
+                    if hit and cardp_x == 1100 and not stand:
+                        #Get a random card that has not been used
+                        r1 = random.randrange(0, 52)
+                        while r1 in listUsedCards:
+                            r1 = random.randrange(0, 52)
+                        listUsedCards += [r1] 
+                        #Start the movement of the card
+                        cardp_x += -20       
+                    hit = False 
+
+                    #Update and draw the position of the card that is currently in motion 
+                    if 530 < cardp_x < 1100:
+                        cardp_x += -20
+                        #Load the card into the game
+                        card = pygame.image.load(listCards[r1] + '.jpg').convert()   
+                        card = pygame.transform.scale(card, (106, 157)) 
+                        screen.blit(card, [cardp_x, 330])
+                    elif cardp_x <= 530:
+                        cardp_x = 1100
+                        #Add to the cards that we need to load 
+                        listNewCardsP += [r1]
+                        #Update the amount of points
+                        player.card = listCards[r1]
+                        pointsCard(player, 3)
+
+                    #showing all the new cards for the player in the game    
+                    for i in range(len(listNewCardsP)):
+                        #Load the card into the game
+                        card = pygame.image.load(listCards[listNewCardsP[i]] + '.jpg').convert()   
+                        card = pygame.transform.scale(card, (106, 157)) 
+                        if i % 2 == 0:
+                            newCard_x = 430
+                        else:
+                            newCard_x = 480    
+                        change_y = 50 * (i // 2)
+                        screen.blit(card, [newCard_x, 380 + change_y])
+
+                    if player.totalCards > 21:
+                        #Show bust
+
+                        
+                        #flip the crup`s other card around 
+                        card = pygame.image.load(crupier.card1 + '.jpg').convert()  
+                        card = pygame.transform.scale(card, (106, 157))   
+                        screen.blit(card, [cardc1_x, 50])
+                        #Adding the points of the flipped card
+                        if count == 3:
+                            pointsCard(crupier, 1)
+                            count += 1  
+                    else:
+                        if stand:
+                            #flip the crup`s other card around 
+                            card = pygame.image.load(crupier.card1 + '.jpg').convert()  
+                            card = pygame.transform.scale(card, (106, 157))   
+                            screen.blit(card, [cardc1_x, 50])
+                            #Adding the points of the flipped card
+                            if count == 3:
+                                pointsCard(crupier, 1)
+                                count += 1
+                            card = pygame.image.load(crupier.card2 + '.jpg').convert()  
+                            card = pygame.transform.scale(card, (106, 157))   
+                            screen.blit(card, [cardc2_x, 50])   
+                            if cardc_x == 1100:
+                                #Get a random card that has not been used
+                                r2 = random.randrange(0, 52)
+                                while r2 in listUsedCards:
+                                    r2 = random.randrange(0, 52)
+                                listUsedCards += [r2]
+                                #Start the movement of the card
+                                cardc_x += -20
+                        #Keep displaying and getting new cards until 21 or above
+                        if crupier.totalCards < 21:
+                            if 530 < cardc_x < 1100: 
+                                card = pygame.image.load(listCards[r2] + '.jpg').convert()   
+                                card = pygame.transform.scale(card, (106, 157)) 
+                                screen.blit(card, [cardc_x, 50])
+                                cardc_x += -20
+                            elif cardc_x <= 530:
+                                cardc_x = 1100
+                                #Add to the cards that we need to load 
+                                listNewCardsC += [r2]
+                                #Update the amount of points
+                                crupier.card = listCards[r2]
+                                pointsCard(crupier, 3)   
+
+                        #showing all the new cards for the crup in the game    
+                        for i in range(len(listNewCardsC)):
+                            #Load the card into the game
+                            card = pygame.image.load(listCards[listNewCardsC[i]] + '.jpg').convert()   
+                            card = pygame.transform.scale(card, (106, 157)) 
+                            if i % 2 == 0:
+                                newCard_x = 430
+                            else:
+                                newCard_x = 480    
+                            change_y = -50 * (i // 2)
+                            screen.blit(card, [newCard_x, 0 + change_y])        
+
+
+
+
+
+
 
             if not deal:
                 buttonColor = DARK_GRAY
