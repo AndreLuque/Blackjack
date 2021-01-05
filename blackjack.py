@@ -153,24 +153,61 @@ def pointsCard(player:Player, numberCard:int) -> None:
                 player.totalCards += int(player.card[0])                              
 
 def main():  
+    pygame.init()
+    #Establecemos la pantalla, sus dimensiones y su nombre
+    dimensions = [1000, 600]
+    screen = pygame.display.set_mode(dimensions) 
+    pygame.display.set_caption('BLACKJACK')
     #Inicializamos el booleano playAgain para ver si el usuario quiere volver a jugar
     playAgain = True
     #Inicializamos el booleano para salir del todo del juego
     exit = False
+    #Inicializamos el booleano para salir de una pantalla
+    done = False
     #Iniciamos el juego
     #Todas las cartas con la que se pueden jugar
     listCards = ['2C', '2D', '2H', '2S', '3C', '3D', '3H', '3S', '4C', '4D', '4H', '4S', '5C', '5D', '5H', '5S', '6C', '6D',
                  '6H', '6S', '7C', '7D', '7H', '7S', '8C', '8D', '8H', '8S', '9C', '9D', '9H', '9S', '10C', '10D', '10H', '10S',
                  'JC', 'JD', 'JH', 'JS','QC', 'QD', 'QH', 'QS','KC', 'KD', 'KH', 'KS','AC', 'AD', 'AH', 'AS']      
-    pygame.init()
-    while playAgain and not exit:
-        #solo se jugará otra vez si el usuario lo decida
-        playAgain = False
+    #Creamos al juagdor y el crupier
+    player = Player(1000, '', '', '', 50, 0, False)
+    crupier = Player(0, '', '', '', 0, 0, False)
+    while not done and not exit:
+        #Conseguimos la posicones del raton
+        pygame.mouse.set_visible(1)
+        pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():  
+            if event.type == pygame.QUIT: # Si el usuario hace click sobre cerrar, saldrá del programa
+                exit = True               
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    exit = True
+            elif event.type == pygame.MOUSEBUTTONDOWN and  350 <= pos[0] <= 830 and 300 <= pos[1] <= 375:
+                    done = True
+        #Ponemos la pantalla en blanco              
+        screen.fill(WHITE)
+        #Cargamos el logo de las cartas y lo plasmamos
+        BJlogo = pygame.image.load("introscreen.png").convert()
+        screen.blit(BJlogo, [10, 100])
+        font = pygame.font.Font('CasinoShadow-italic.ttf', 130)
+        #Escribimos el titulo de blackjack
+        text = font.render("Blackjack", True, BLACK)
+        screen.blit(text, [280, 180])
+        #Ponemos el boton para empezar el juego
+        buttonColor = BLACK
+        if  350 <= pos[0] <= 830 and 300 <= pos[1] <= 375: 
+            buttonColor = DARK_GRAY
+        pygame.draw.rect(screen, buttonColor, (350, 300, 480, 75))
+        font = pygame.font.Font('CasinoFlat.ttf', 40)
+        text = font.render("Press to start game", True, WHITE)
+        screen.blit(text, [400, 320])
+        #Refrescamos la pantalla, actualizamos la imagen 
+        pygame.display.flip()
+    time.sleep(1)
+
+    while not exit:
         #inicializamos el booleano done hasta que salga de la pantalla de introduccion
         done = False
-        #Creamos al juagdor y el crupier
-        player = Player(1000, '', '', '', 50, 0, False)
-        crupier = Player(0, '', '', '', 0, 0, False)
         #Aqui almacenamos las cartas que ya estan en juego y por lo tanto no se pueden repetir
         listUsedCards = []       
         #Almacenamos las nuevas cartas del jugador y del crupier que vamos a introducir en el juego
@@ -200,45 +237,29 @@ def main():
         stand = False
         #Inicializamos para que cuente los puntos de cada carta una vez
         count = 0
-        #Establecemos la pantalla, sus dimensiones y su nombre
-        dimensions = [1000, 600]
-        screen = pygame.display.set_mode(dimensions) 
-        pygame.display.set_caption('BLACKJACK')
+        #Con la apuesta inicial reducimos el dinero del juagdor
+        player.money += -50
+        #Reniciamos los valores de los juagdores
+        player.card1 = ''
+        player.card2 = ''
+        player.card = ''
+        player.totalCards = 0
+        player.bet = 50
+        player.ace = False
+        crupier.card1 = ''
+        crupier.card2 = ''
+        crupier.card = ''
+        crupier.totalCards = 0
+        crupier.ace = False
+        #the initial bet
+        initialBet = 50
+        #Generamos colores aleatorios para nuestras fichas
+        listColors = []
+        for i in range(6):
+            listColors += [(random.randrange(256), random.randrange(256), random.randrange(256))]
         #We start the clock
         clock = pygame.time.Clock()
-        while not done and not exit:
-            #Conseguimos la posicones del raton
-            pygame.mouse.set_visible(1)
-            pos = pygame.mouse.get_pos()
-            for event in pygame.event.get():  
-                if event.type == pygame.QUIT: # Si el usuario hace click sobre cerrar, saldrá del programa
-                    exit = True               
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        exit = True
-                elif event.type == pygame.MOUSEBUTTONDOWN and  350 <= pos[0] <= 830 and 300 <= pos[1] <= 375:
-                        done = True
-            #Ponemos la pantalla en blanco              
-            screen.fill(WHITE)
-            #Cargamos el logo de las cartas y lo plasmamos
-            BJlogo = pygame.image.load("introscreen.png").convert()
-            screen.blit(BJlogo, [10, 100])
-            font = pygame.font.Font('CasinoShadow-italic.ttf', 130)
-            #Escribimos el titulo de blackjack
-            text = font.render("Blackjack", True, BLACK)
-            screen.blit(text, [280, 180])
-            #Ponemos el boton para empezar el juego
-            buttonColor = BLACK
-            if  350 <= pos[0] <= 830 and 300 <= pos[1] <= 375: 
-                buttonColor = DARK_GRAY
-            pygame.draw.rect(screen, buttonColor, (350, 300, 480, 75))
-            font = pygame.font.Font('CasinoFlat.ttf', 40)
-            text = font.render("Press to start game", True, WHITE)
-            screen.blit(text, [400, 320])
-            #Refrescamos la pantalla, actualizamos la imagen 
-            pygame.display.flip()
 
-        time.sleep(1)    
         done = False
         while not done and not exit:
             #Conseguimos la posicion del raton
@@ -256,7 +277,38 @@ def main():
                         elif 200 <= pos[0] <= 330 and 230 <= pos[1] <= 300 and count == 3:
                             hit = True
                         elif 700 <= pos[0] <= 830 and 230 <= pos[1] <= 300 and count == 3:
-                            stand = True         
+                            stand = True
+                        #Si coincide con la posicion de una de las fichas aumentamos la apuesta
+                        elif ((pos[0] - 75) ** 2 + (pos[1] - 397) ** 2) <= 2500 and not deal:
+                            if player.money >= 5:
+                                player.bet += 5
+                                player.money += -5
+                                initialBet += 5
+                        elif ((pos[0] - 220) ** 2 + (pos[1] - 397) ** 2) <= 2500 and not deal:
+                           if player.money >= 10:
+                               player.bet += 10
+                               player.money += -10
+                               initialBet += 10
+                        elif ((pos[0] - 361) ** 2 + (pos[1] - 397) ** 2) <= 2500 and not deal:
+                           if player.money >= 25:
+                               player.bet += 25
+                               player.money += -25
+                               initialBet += 25
+                        elif ((pos[0] - 80) ** 2 + (pos[1] - 517) ** 2) <= 2500 and not deal:
+                           if player.money >= 50:
+                               player.bet += 50
+                               player.money += -50
+                               initialBet += 50
+                        elif ((pos[0] - 220) ** 2 + (pos[1] - 517) ** 2) <= 2500 and not deal:
+                           if player.money >= 100:
+                               player.bet += 100
+                               initialBet += 100
+                               player.money += -100
+                        elif ((pos[0] - 361) ** 2 + (pos[1] - 517) ** 2) <= 2500 and not deal:
+                           if player.money >= 250:
+                               player.bet += 250
+                               player.money += -250
+                               initialBet += 250                               
             #Cubrimos la pantalla de verde                
             screen.fill(GREEN)       
 
@@ -271,11 +323,30 @@ def main():
             #Ponemos el dinero que el usuario haya puesto para apostar
             font = pygame.font.Font('Anton.ttf', 65)
             text = font.render(str(player.bet), True, WHITE)
-            screen.blit(text, [bet_x, 215])
+            screen.blit(text, [bet_x - 30, 215])
             text = font.render('$', True, LIGHT_GREEN)
-            screen.blit(text, [bet_x - 40, 215])
+            screen.blit(text, [bet_x - 70, 215])
             #Ponemos las fichas
-
+            for i in range(6):
+                if i < 3:
+                    pygame.draw.circle(screen, listColors[i], (80 + (i * 140), betMenu_y + 100), 50)
+                    pygame.draw.circle(screen, WHITE, (80 + (i * 140), betMenu_y + 100), 50, 3)
+                else:
+                    pygame.draw.circle(screen, listColors[i], (80 + ((i - 3) * 140), betMenu_y + 220), 50)
+                    pygame.draw.circle(screen, WHITE, (80 + ((i - 3) * 140), betMenu_y + 220), 50, 3)
+            font = pygame.font.Font('Anton.ttf', 50)
+            text = font.render('5', True, WHITE)
+            screen.blit(text, [67, betMenu_y + 63])     
+            text = font.render('10', True, WHITE)
+            screen.blit(text, [198, betMenu_y + 63]) 
+            text = font.render('25', True, WHITE)
+            screen.blit(text, [335, betMenu_y + 63]) 
+            text = font.render('50', True, WHITE)
+            screen.blit(text, [55, betMenu_y + 183]) 
+            text = font.render('100', True, WHITE)
+            screen.blit(text, [187, betMenu_y + 183]) 
+            text = font.render('250', True, WHITE)
+            screen.blit(text, [323, betMenu_y + 183])        
             #Boton de all-in 
 
             #Boton de Deal, empezará el juego
@@ -336,25 +407,25 @@ def main():
                     screen.blit(card, [cardc2_x, 50])
                     #Actualizamos la posicion de las cartas en secuencia y añadimos su puntuacion
                     if cardp1_x > 430:
-                        cardp1_x += -20
+                        cardp1_x += -40
                     else: 
                         cardp1_x = 430
                         if count == 0:
                             pointsCard(player, 1)
                             count += 1
                         if cardc1_x > 430:
-                            cardc1_x += -20
+                            cardc1_x += -40
                         else: 
                             cardc1_x = 430   
                             if cardp2_x > 480:
-                                cardp2_x += -20
+                                cardp2_x += -40
                             else: 
                                 cardp2_x = 480 
                                 if count == 1:
                                     pointsCard(player, 2) 
                                     count += 1 
                                 if cardc2_x > 480:
-                                    cardc2_x += -20
+                                    cardc2_x += -40
                                 else: 
                                     cardc2_x = 480 
                                     if count == 2:
@@ -383,12 +454,12 @@ def main():
                             r1 = random.randrange(0, 52)
                         listUsedCards += [r1] 
                         #Start the movement of the card
-                        cardp_x += -20       
+                        cardp_x += -40       
                     hit = False 
 
                     #Update and draw the position of the card that is currently in motion 
                     if 530 < cardp_x < 1100:
-                        cardp_x += -20
+                        cardp_x += -40
                         #Load the card into the game
                         card = pygame.image.load(listCards[r1] + '.jpg').convert()   
                         card = pygame.transform.scale(card, (106, 157)) 
@@ -406,7 +477,7 @@ def main():
                         #Load the card into the game
                         card = pygame.image.load(listCards[listNewCardsP[i]] + '.jpg').convert()   
                         card = pygame.transform.scale(card, (106, 157)) 
-                        if i % 2 == 0:
+                        if i % 2 == 0:  
                             newCard_x = 430
                         else:
                             newCard_x = 480    
@@ -414,13 +485,24 @@ def main():
                         screen.blit(card, [newCard_x, 380 + change_y])
 
                     if player.totalCards > 21:
-                        #Show bust
-
-                        
-                        #flip the crup`s other card around 
-                        card = pygame.image.load(crupier.card1 + '.jpg').convert()  
-                        card = pygame.transform.scale(card, (106, 157))   
-                        screen.blit(card, [cardc1_x, 50])
+                        if count == 6:
+                            done = True
+                        if count == 5:
+                            #Freezing the screen after showing the BUST message
+                            time.sleep(5)  
+                            count += 1  
+                        if count >= 4:
+                            #flip the crup`s other card around 
+                            card = pygame.image.load(crupier.card1 + '.jpg').convert()  
+                            card = pygame.transform.scale(card, (106, 157))   
+                            screen.blit(card, [cardc1_x, 50])
+                            if count == 4:
+                                pygame.draw.rect(screen , WHITE, (300, 180, 400, 150))
+                                pygame.draw.rect(screen , BLACK, (300, 180, 400, 150), 3)
+                                font = pygame.font.Font('Anton.ttf', 100)
+                                text = font.render('BUST!', True, BLACK)
+                                screen.blit(text, [400, 180]) 
+                                count += 1
                         #Adding the points of the flipped card
                         if count == 3:
                             pointsCard(crupier, 1)
@@ -438,21 +520,21 @@ def main():
                             card = pygame.image.load(crupier.card2 + '.jpg').convert()  
                             card = pygame.transform.scale(card, (106, 157))   
                             screen.blit(card, [cardc2_x, 50])   
-                            if cardc_x == 1100:
+                            if cardc_x == 1100 and crupier.totalCards < 17:
                                 #Get a random card that has not been used
                                 r2 = random.randrange(0, 52)
                                 while r2 in listUsedCards:
                                     r2 = random.randrange(0, 52)
                                 listUsedCards += [r2]
                                 #Start the movement of the card
-                                cardc_x += -20
+                                cardc_x += -40
                         #Keep displaying and getting new cards until 21 or above
-                        if crupier.totalCards < 21:
+                        if crupier.totalCards < 17:
                             if 530 < cardc_x < 1100: 
                                 card = pygame.image.load(listCards[r2] + '.jpg').convert()   
                                 card = pygame.transform.scale(card, (106, 157)) 
                                 screen.blit(card, [cardc_x, 50])
-                                cardc_x += -20
+                                cardc_x += -40
                             elif cardc_x <= 530:
                                 cardc_x = 1100
                                 #Add to the cards that we need to load 
@@ -471,7 +553,47 @@ def main():
                             else:
                                 newCard_x = 480    
                             change_y = -50 * (i // 2)
-                            screen.blit(card, [newCard_x, 0 + change_y])        
+                            screen.blit(card, [newCard_x, 0 + change_y])    
+                        #Once the crup is donde getting new cards we compare them to see who won    
+                        if crupier.totalCards >= 17:
+                            #Once we know who won , we want it to show visuallly by gradually increasing or decreasing the money in the middle of
+                            #the screen and then adding it to the players bank
+                            if crupier.totalCards > 21:
+                                if player.bet < initialBet * 2:
+                                    player.bet += 5   
+                                elif player.bet >= initialBet * 2 and initialBet != 0:
+                                    player.money += player.bet
+                                    initialBet = 0
+                                if player.bet > initialBet * 2 and initialBet != 0:
+                                    player.bet = initialBet * 2     
+                            elif crupier.totalCards > player.totalCards:
+                                if player.bet > 0:
+                                    player.bet += -5
+                                elif player.bet <= 0 and initialBet != 0:
+                                    initialBet = 0
+                                if player.bet < 0 and initialBet != 0:
+                                    player.bet = 0    
+                            elif crupier.totalCards < player.totalCards:
+                                if player.bet < initialBet * 2:
+                                    player.bet += 5
+                                elif player.bet >= initialBet * 2 and initialBet != 0:
+                                    player.money += player.bet
+                                    initialBet = 0
+                                if player.bet > initialBet * 2 and initialBet != 0:
+                                    player.bet = initialBet * 2     
+                            elif player.totalCards == crupier.totalCards:
+                                if initialBet != 0:
+                                    player.money += player.bet
+                                    initialBet = 0
+                            #After the money has reached the desired value we set a variable to 0 and have a counter so that the player has time to visualize
+                            #what happened    
+                            if initialBet == 0:
+                                #Show a message of who won
+                                count += 1
+                                if count == 30:
+                                    done = True
+
+
 
 
 
