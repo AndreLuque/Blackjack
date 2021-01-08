@@ -157,12 +157,10 @@ def playSound(sound:str) -> None:
     #Reproduce el sonido elegido
     play = pygame.mixer.Sound(sound)
     play.play()
+    return play
 
 def main():  
     pygame.init()
-
-
-    
     #Establecemos la pantalla, sus dimensiones y su nombre
     dimensions = [1000, 600]
     screen = pygame.display.set_mode(dimensions) 
@@ -175,7 +173,12 @@ def main():
     #Todas las cartas con la que se pueden jugar
     listCards = ['2C', '2D', '2H', '2S', '3C', '3D', '3H', '3S', '4C', '4D', '4H', '4S', '5C', '5D', '5H', '5S', '6C', '6D',
                  '6H', '6S', '7C', '7D', '7H', '7S', '8C', '8D', '8H', '8S', '9C', '9D', '9H', '9S', '10C', '10D', '10H', '10S',
-                 'JC', 'JD', 'JH', 'JS','QC', 'QD', 'QH', 'QS','KC', 'KD', 'KH', 'KS','AC', 'AD', 'AH', 'AS']      
+                 'JC', 'JD', 'JH', 'JS','QC', 'QD', 'QH', 'QS','KC', 'KD', 'KH', 'KS','AC', 'AD', 'AH', 'AS']
+
+    #Play intro music on repeat            
+    sound = pygame.mixer.Sound('beat.wav')
+    sound.play(-1)
+    #pygame.mixer.music.play(-1)
     while not done and not exit:
         #Conseguimos la posicones del raton
         pygame.mouse.set_visible(1)
@@ -206,8 +209,8 @@ def main():
         text = font.render("Press to start game", True, WHITE)
         screen.blit(text, [400, 320])
         #Refrescamos la pantalla, actualizamos la imagen 
-        pygame.display.flip()
-    time.sleep(1)
+        pygame.display.flip()   
+    time.sleep(2)
     
     #Inicializamos el booleano playAgain para ver si el usuario quiere volver a jugar
     playAgain = True
@@ -356,9 +359,7 @@ def main():
                 text = font.render('100', True, WHITE)
                 screen.blit(text, [187, betMenu_y + 183]) 
                 text = font.render('250', True, WHITE)
-                screen.blit(text, [323, betMenu_y + 183])        
-                #Boton de all-in 
-
+                screen.blit(text, [323, betMenu_y + 183])         
                 #Boton de Deal, empezará el juego
                 #Desplazamos la apuesta y el menu en caso de que el usuario pulse DEAL para empezar el juego 
                 if deal:
@@ -582,7 +583,7 @@ def main():
                                 #the screen and then adding it to the players bank
                                 if crupier.totalCards > 21:
                                     if player.bet < initialBet * 2:
-                                        player.bet += 5   
+                                        player.bet += int(0.1 * initialBet)   
                                     elif player.bet >= initialBet * 2 and initialBet != 0:
                                         player.money += player.bet
                                         initialBet = 0
@@ -594,7 +595,7 @@ def main():
                                     screen.blit(text, [30, 10])      
                                 elif crupier.totalCards > player.totalCards:
                                     if player.bet > 0:
-                                        player.bet += -5
+                                        player.bet += int(-0.1 * initialBet)
                                     elif player.bet <= 0 and initialBet != 0:
                                         initialBet = 0
                                     if player.bet < 0 and initialBet != 0:
@@ -605,7 +606,7 @@ def main():
                                     screen.blit(text, [30, 10])      
                                 elif crupier.totalCards < player.totalCards:
                                     if player.bet < initialBet * 2:
-                                        player.bet += 5
+                                        player.bet += int(0.1 * initialBet)
                                     elif player.bet >= initialBet * 2 and initialBet != 0:
                                         player.money += player.bet
                                         initialBet = 0
