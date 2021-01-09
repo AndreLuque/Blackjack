@@ -404,16 +404,16 @@ def main():
                             listUsedCards += [r] 
                             print(player.card1, player.card2, crupier.card1, crupier.card2)    
                         #Cargamos las cartas a la pantalla
-                        card = pygame.image.load(player.card1 + '.jpg').convert()   
+                        card = pygame.image.load(player.card1 + '.png').convert()   
                         card = pygame.transform.scale(card, (106, 157)) 
                         screen.blit(card, [cardp1_x, 330])
-                        card = pygame.image.load('blue_back.jpg').convert() 
+                        card = pygame.image.load('blue_back.png').convert() 
                         card = pygame.transform.scale(card, (106, 157))    
                         screen.blit(card, [cardc1_x, 50])
-                        card = pygame.image.load(player.card2 + '.jpg').convert() 
+                        card = pygame.image.load(player.card2 + '.png').convert() 
                         card = pygame.transform.scale(card, (106, 157))  
                         screen.blit(card, [cardp2_x, 330]) 
-                        card = pygame.image.load(crupier.card2 + '.jpg').convert()  
+                        card = pygame.image.load(crupier.card2 + '.png').convert()  
                         card = pygame.transform.scale(card, (106, 157))   
                         screen.blit(card, [cardc2_x, 50])
                         #Actualizamos la posicion de las cartas en secuencia y añadimos su puntuacion
@@ -480,7 +480,7 @@ def main():
                         if 530 < cardp_x < 1100:
                             cardp_x += -40
                             #Load the card into the game
-                            card = pygame.image.load(listCards[r1] + '.jpg').convert()   
+                            card = pygame.image.load(listCards[r1] + '.png').convert()   
                             card = pygame.transform.scale(card, (106, 157)) 
                             screen.blit(card, [cardp_x, 330])
                         elif cardp_x <= 530:
@@ -494,7 +494,7 @@ def main():
                         #showing all the new cards for the player in the game    
                         for i in range(len(listNewCardsP)):
                             #Load the card into the game
-                            card = pygame.image.load(listCards[listNewCardsP[i]] + '.jpg').convert()   
+                            card = pygame.image.load(listCards[listNewCardsP[i]] + '.png').convert()   
                             card = pygame.transform.scale(card, (106, 157)) 
                             if i % 2 == 0:  
                                 newCard_x = 430
@@ -511,7 +511,7 @@ def main():
                                 count += 1
                             if count >= 4:
                                 #flip the crup`s other card around 
-                                card = pygame.image.load(crupier.card1 + '.jpg').convert()  
+                                card = pygame.image.load(crupier.card1 + '.png').convert()  
                                 card = pygame.transform.scale(card, (106, 157))   
                                 screen.blit(card, [cardc1_x, 50])
                                 pygame.draw.rect(screen, LIGHT_RED, (0, 0, 330, 100))
@@ -533,14 +533,14 @@ def main():
                         else:
                             if stand:
                                 #flip the crup`s other card around 
-                                card = pygame.image.load(crupier.card1 + '.jpg').convert()  
+                                card = pygame.image.load(crupier.card1 + '.png').convert()  
                                 card = pygame.transform.scale(card, (106, 157))   
                                 screen.blit(card, [cardc1_x, 50])
                                 #Adding the points of the flipped card
                                 if count == 3:
                                     pointsCard(crupier, 1)
                                     count += 1
-                                card = pygame.image.load(crupier.card2 + '.jpg').convert()  
+                                card = pygame.image.load(crupier.card2 + '.png').convert()  
                                 card = pygame.transform.scale(card, (106, 157))   
                                 screen.blit(card, [cardc2_x, 50])   
                                 if cardc_x == 1100 and crupier.totalCards < 17:
@@ -554,7 +554,7 @@ def main():
                             #Keep displaying and getting new cards until 21 or above
                             if crupier.totalCards < 17:
                                 if 530 < cardc_x < 1100: 
-                                    card = pygame.image.load(listCards[r2] + '.jpg').convert()   
+                                    card = pygame.image.load(listCards[r2] + '.png').convert()   
                                     card = pygame.transform.scale(card, (106, 157)) 
                                     screen.blit(card, [cardc_x, 50])
                                     cardc_x += -40
@@ -569,7 +569,7 @@ def main():
                             #showing all the new cards for the crup in the game    
                             for i in range(len(listNewCardsC)):
                                 #Load the card into the game
-                                card = pygame.image.load(listCards[listNewCardsC[i]] + '.jpg').convert()   
+                                card = pygame.image.load(listCards[listNewCardsC[i]] + '.png').convert()   
                                 card = pygame.transform.scale(card, (106, 157)) 
                                 if i % 2 == 0:
                                     newCard_x = 430
